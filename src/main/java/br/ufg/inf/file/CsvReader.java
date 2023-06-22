@@ -26,6 +26,6 @@ public class CsvReader {
         for (Horario teste : testes){
             System.out.println(teste);
         }
-        return null;
+        return testes;
     }
 }

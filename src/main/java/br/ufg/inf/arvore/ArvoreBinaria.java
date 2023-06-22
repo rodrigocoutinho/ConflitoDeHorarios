@@ -1,10 +1,13 @@
 package br.ufg.inf.arvore;
 
+import br.ufg.inf.file.CsvReader;
+import br.ufg.inf.model.Horario;
+
 import java.io.*;
 import java.util.*;
 
 class No {
-    public long item;
+    public Horario item;
     public No dir;
     public No esq;
 }
@@ -14,7 +17,7 @@ class Tree {
 
     public Tree() { root=null; } // inicializa arvore
 
-    public void inserir(long v) {
+    public void inserir(Horario v) {
         No novo = new No(); // cria um novo Nó
         novo.item = v; // atribui o valor recebido ao item de dados do Nó
         novo.dir = null;
@@ -26,7 +29,7 @@ class Tree {
             No anterior;
             while(true) {
                 anterior = atual;
-                if (v <= atual.item) { // ir para esquerda
+                if (v.getId() <= atual.item.getId()) { // ir para esquerda
                     atual = atual.esq;
                     if (atual == null) {
                         anterior.esq = novo;
@@ -45,11 +48,11 @@ class Tree {
 
     }
 
-    public No buscar(long chave) {
+    public No buscar(Horario h) {
         if (root == null) return null; // se arvore vazia
         No atual = root;  // começa a procurar desde raiz
-        while (atual.item != chave) { // enquanto nao encontrou
-            if(chave < atual.item ) atual = atual.esq; // caminha para esquerda
+        while (atual.item.getId()!= h.getId()) { // enquanto nao encontrou
+            if(h.getId() < atual.item.getId() ) atual = atual.esq; // caminha para esquerda
             else atual = atual.dir; // caminha para direita
             if (atual == null) return null; // encontrou uma folha -> sai
         } // fim laço while
@@ -57,7 +60,7 @@ class Tree {
     }
 
 
-    public boolean remover(long v) {
+    public boolean remover(Horario h) {
         if (root == null) return false; // se arvore vazia
 
         No atual = root;
@@ -65,9 +68,9 @@ class Tree {
         boolean filho_esq = true;
 
         // ****** Buscando o valor **********
-        while (atual.item != v) { // enquanto nao encontrou
+        while (atual.item.getId() != h.getId()) { // enquanto nao encontrou
             pai = atual;
-            if(v < atual.item ) { // caminha para esquerda
+            if(h.getId() < atual.item.getId() ) { // caminha para esquerda
                 atual = atual.esq;
                 filho_esq = true; // é filho a esquerda? sim
             }
@@ -232,52 +235,60 @@ class Tree {
 }
 ////////////////////////////////////////////////
 class ArvoreBinaria {
-    public static void main(String[] args) {
-        Scanner le = new Scanner(System.in);
+    public static void main(String[] args) throws IOException {
+
+        List<Horario> horarios = CsvReader.read();
         Tree arv = new Tree();
-        int opcao;
-        long x;
-        System.out.print("\n Programa Arvore binaria de long");
-        do {
-            System.out.print("\n***********************************");
-            System.out.print("\nEntre com a opcao:");
-            System.out.print("\n ----1: Inserir");
-            System.out.print("\n ----2: Excluir");
-            System.out.print("\n ----3: Pesquisar");
-            System.out.print("\n ----4: Exibir");
-            System.out.print("\n ----5: Sair do programa");
-            System.out.print("\n***********************************");
-            System.out.print("\n-> ");
-            opcao = le.nextInt();
-            switch(opcao) {
-                case 1: {
-                    System.out.print("\n Informe o valor (long) -> ");
-                    x = le.nextLong();
-                    arv.inserir(x);
-                    break;
-                }
-                case 2: {
-                    System.out.print("\n Informe o valor (long) -> ");
-                    x = le.nextLong();
-                    if ( !arv.remover(x) )
-                        System.out.print("\n Valor nao encontrado!");;
-                    break;
-                }
-                case 3: {
-                    System.out.print("\n Informe o valor (long) -> ");
-                    x = le.nextLong();
-                    if( arv.buscar(x) != null )
-                        System.out.print("\n Valor Encontrado");
-                    else
-                        System.out.print("\n Valor nao encontrado!");
-                    break;
-                }
-                case 4: {
-                    arv.caminhar();
-                    break;
-                }
-            } // fim switch
-        } while(opcao != 5);
+        for(Horario horario: horarios){
+            arv.inserir(horario);
+        }
+        arv.caminhar();
+
+//        Scanner le = new Scanner(System.in);
+//        Tree arv = new Tree();
+//        int opcao;
+//        long x;
+//        System.out.print("\n Programa Arvore binaria de long");
+//        do {
+//            System.out.print("\n***********************************");
+//            System.out.print("\nEntre com a opcao:");
+//            System.out.print("\n ----1: Inserir");
+//            System.out.print("\n ----2: Excluir");
+//            System.out.print("\n ----3: Pesquisar");
+//            System.out.print("\n ----4: Exibir");
+//            System.out.print("\n ----5: Sair do programa");
+//            System.out.print("\n***********************************");
+//            System.out.print("\n-> ");
+//            opcao = le.nextInt();
+//            switch(opcao) {
+//                case 1: {
+//                    System.out.print("\n Informe o valor (long) -> ");
+//                    x = le.nextLong();
+//                    arv.inserir(x);
+//                    break;
+//                }
+//                case 2: {
+//                    System.out.print("\n Informe o valor (long) -> ");
+//                    x = le.nextLong();
+//                    if ( !arv.remover(x) )
+//                        System.out.print("\n Valor nao encontrado!");;
+//                    break;
+//                }
+//                case 3: {
+//                    System.out.print("\n Informe o valor (long) -> ");
+//                    x = le.nextLong();
+//                    if( arv.buscar(x) != null )
+//                        System.out.print("\n Valor Encontrado");
+//                    else
+//                        System.out.print("\n Valor nao encontrado!");
+//                    break;
+//                }
+//                case 4: {
+//                    arv.caminhar();
+//                    break;
+//                }
+//            } // fim switch
+//        } while(opcao != 5);
 
     }
 }
