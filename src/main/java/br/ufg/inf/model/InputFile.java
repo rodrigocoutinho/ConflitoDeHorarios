@@ -3,15 +3,15 @@ package br.ufg.inf.model;
 import lombok.Data;
 
 @Data
-public class Horario {
+public class InputFile {
         private int id;
-        private int idsolution;
-        private String solutionname;
-        private String solutioninitials;
-        private int idteacher;
-        private String teachername;
+        private int idSolution;
+        private String solutionName;
+        private String solutionInitials;
+        private int idTeacher;
+        private String teacherName;
         private int idDay;
-        private int idInsitution;
+        private int idInstitution;
         private int idUnit;
         private String unitName;
         private int idUnitCourse;
@@ -34,4 +34,14 @@ public class Horario {
         private int idCollisionType;
         private int collisionLevel;
         private int collisionSize;
-    }
+        private boolean isTotalConflict;
+        private String typeConflict;
+
+        public boolean isTotalConflict() {
+                return isTotalConflict;
+        }
+
+        public void setTotalConflict(boolean totalConflict) {
+                isTotalConflict = totalConflict;
+        }
+}

@@ -1,13 +1,20 @@
 package br.ufg.inf.arvore;
 
 import br.ufg.inf.file.CsvReader;
-import br.ufg.inf.model.Horario;
+import br.ufg.inf.model.InputFile;
+import com.opencsv.bean.StatefulBeanToCsv;
+import com.opencsv.bean.StatefulBeanToCsvBuilder;
+import com.opencsv.exceptions.CsvDataTypeMismatchException;
+import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
+import lombok.Data;
 
 import java.io.*;
 import java.util.*;
 
+import static br.ufg.inf.Main.checkConflicts;
+
 class No {
-    public Horario item;
+    public InputFile item;
     public No dir;
     public No esq;
 }
@@ -17,9 +24,9 @@ class Tree {
 
     public Tree() { root=null; } // inicializa arvore
 
-    public void inserir(Horario v) {
+    public void inserir(InputFile input) {
         No novo = new No(); // cria um novo Nó
-        novo.item = v; // atribui o valor recebido ao item de dados do Nó
+        novo.item = input; // atribui o valor recebido ao item de dados do Nó
         novo.dir = null;
         novo.esq = null;
 
@@ -29,7 +36,7 @@ class Tree {
             No anterior;
             while(true) {
                 anterior = atual;
-                if (v.getId() <= atual.item.getId()) { // ir para esquerda
+                if (input.getId() <= atual.item.getId()) { // ir para esquerda
                     atual = atual.esq;
                     if (atual == null) {
                         anterior.esq = novo;
@@ -48,7 +55,7 @@ class Tree {
 
     }
 
-    public No buscar(Horario h) {
+    public No buscar(InputFile h) {
         if (root == null) return null; // se arvore vazia
         No atual = root;  // começa a procurar desde raiz
         while (atual.item.getId()!= h.getId()) { // enquanto nao encontrou
@@ -60,7 +67,7 @@ class Tree {
     }
 
 
-    public boolean remover(Horario h) {
+    public boolean remover(InputFile h) {
         if (root == null) return false; // se arvore vazia
 
         No atual = root;
@@ -237,10 +244,20 @@ class Tree {
 class ArvoreBinaria {
     public static void main(String[] args) throws IOException {
 
-        List<Horario> horarios = CsvReader.read();
+        List<InputFile> inputFiles = CsvReader.read();
+        List<InputFile> conficts= checkConflicts(inputFiles);
         Tree arv = new Tree();
-        for(Horario horario: horarios){
-            arv.inserir(horario);
+        for(InputFile conflict : conficts){
+            arv.inserir(conflict);
+        }
+
+
+        try {
+            write(conficts);
+        } catch (CsvRequiredFieldEmptyException e) {
+            throw new RuntimeException(e);
+        } catch (CsvDataTypeMismatchException e) {
+            throw new RuntimeException(e);
         }
         arv.caminhar();
 
@@ -290,5 +307,12 @@ class ArvoreBinaria {
 //            } // fim switch
 //        } while(opcao != 5);
 
+    }
+    public static void write(List<InputFile> objects) throws IOException, CsvRequiredFieldEmptyException, CsvDataTypeMismatchException {
+        // List<MyBean> beans comes from somewhere earlier in your code.
+        Writer writer = new FileWriter("objectsOutPut.csv");
+        StatefulBeanToCsv beanToCsv = new StatefulBeanToCsvBuilder(writer).build();
+        beanToCsv.write(objects);
+        writer.close();
     }
 }

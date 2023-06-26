@@ -1,6 +1,6 @@
 package br.ufg.inf.file;
 
-import br.ufg.inf.model.Horario;
+import br.ufg.inf.model.InputFile;
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
 
@@ -14,18 +14,18 @@ import java.util.List;
 @ApplicationScoped
 public class CsvReader {
 
-    public static List<Horario> read() throws IOException {
+    public static List<InputFile> read() throws IOException {
         Reader reader = Files.newBufferedReader(Paths.get("ColisaoHorarios-DadosEntrada.csv"));
 
-        CsvToBean<Horario> csvToBean = new CsvToBeanBuilder(reader)
-                .withType(Horario.class)
+        CsvToBean<InputFile> csvToBean = new CsvToBeanBuilder(reader)
+                .withType(InputFile.class)
                 .build();
 
-        List<Horario> testes = csvToBean.parse();
+        List<InputFile> testes = csvToBean.parse();
 
-        for (Horario teste : testes){
-            System.out.println(teste);
-        }
+//        for (InputFile teste : testes){
+//            System.out.println(teste);
+//        }
         return testes;
     }
 }
